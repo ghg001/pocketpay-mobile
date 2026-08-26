@@ -109,6 +109,7 @@ When the PocketPay SDK ships a vault readiness signal, it should be wired into `
 
 ## Related Documentation
 
+- [Vault Feature Module](../src/features/vault/README.md) - Architecture of components, hooks, and stores
 - [Vault UI Guidance](./vault-ui-guidance.md) - Wording, Testnet constraints, and balance limitation details
 - [Vault Integration Risks](./vault-integration-risks.md) - Deep dive into risk analysis and contract simulation mechanics
 - [Vault SDK Capability Assumptions](./vault-sdk-capability-assumptions.md) - SDK readiness signals & feature flag assumptions
