@@ -29,7 +29,8 @@ React Native Expo wallet for Stellar Testnet. The app aims to feel polished and 
 - [Polyfills Guide](./docs/polyfills.md) - React Native polyfills and import order for Stellar SDK
 - [Vault UI Guidance](./docs/vault-ui-guidance.md) - How to present the Soroban Savings Vault, Testnet risks, and contract limitations
 - [Vault Integration Assumptions](./docs/vault-integration-assumptions.md) - Document expected SDK/contract dependencies, placeholder behaviors, and known gaps
-- [Vault Integration Risks](./docs/vault-integration-risks.md) - Assumptions, risks, and integration points between the mobile UI, PocketPay SDK, and Soroban contract
+- [Vault Integration Risks](./docs/vault-integration-risks.md) - Technical integration risk analysis, SDK/contract assumptions, error recovery models, and cross-repo coordination roadmap
+- [Vault Feature Module](./src/features/vault/README.md) - Architectural guide for components, hooks, stores, and dual-mode vault execution
 - [Mobile Wallet Security FAQ](./docs/WALLET_SECURITY_FAQ.md) - Local storage, secret handling, reset behaviors, and security guarantees
 - [Accessibility Checklist](./docs/accessibility.md) - Required mobile accessibility checks and reusable-component review guidance for major screens and every UI state
 - [UI State Catalogue](./docs/ui-states.md) - Canonical loading, empty, error, success, disabled, and pending behavior for wallet, send, receive, transactions, contacts, vault, settings, and diagnostics
@@ -44,7 +45,7 @@ React Native Expo wallet for Stellar Testnet. The app aims to feel polished and 
 - XLM balance and transactions
 - Send and receive with QR codes
 - Address book contacts
-- Soroban vault placeholder
+- Soroban Savings Vault (dual-mode: mock placeholder by default, live Soroban contract when configured)
 
 For the expected screen sequence, validation, and UI states behind these features, see [Main wallet user flows](docs/user-flows.md).
 
