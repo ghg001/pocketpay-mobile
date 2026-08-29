@@ -27,7 +27,7 @@ export function isSentTransaction(
 
 /**
  * Gets the counterparty address for a transaction
- * (recipient for sent transactions, sender for received)
+ *(recipient for sent transactions, sender for received)
  */
 export function getCounterpartyAddress(
   tx: TransactionDetail,
@@ -98,7 +98,7 @@ export function validateTransactionData(tx: TransactionDetail): {
   isValid: boolean;
   missingFields: string[];
 } {
-  const missingFields: string[] = [];
+  const missingFields : string[] = [];
   
   if (!tx.id) missingFields.push('id');
   if (!tx.amount && tx.amount !== '0') missingFields.push('amount');
@@ -118,4 +118,25 @@ export function getDirectionLabel(
 ): string {
   const isSent = isSentTransaction(tx, currentPublicKey);
   return isSent ? 'Sent' : 'Received';
+}
+
+/**
+ * Base URL for the Stellar Testnet explorer.
+ */
+const TESTNET_EXPLORER_URL = 'https://testnet.stellar.expert/explorer/testnet/tx/';
+
+/**
+ * Checks if a transaction hash is valid (64-character hex string)
+ */
+export function isValidTransactionHash(hash: string): boolean {
+  return /^[a-f0-9]{64}$/i.test(hash);
+}
+
+/**
+ * Returns the Stellar Testnet explorer URL for a transaction, or null if invalid.
+ */
+export function getTransactionExplorerUrl(tx: TransactionDetail): string | null {
+  const hash = getTransactionHash(tx);
+  if (!isValidTransactionHash(hash)) return null;
+  return `${TESTNET_EXPLORER_URL}${hash}`;
 }
