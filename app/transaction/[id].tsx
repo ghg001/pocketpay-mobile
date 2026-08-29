@@ -186,7 +186,8 @@ export default function TransactionDetailScreen() {
   const recipientLabel = resolveAddressLabel(recipientAddress, contacts);
 
   // Explorer link
-  const explorerUrl = getExplorerTxUrl(txHash);
+  const explorerUrl = getExplorerTxUrl(txHash, 'testnet');
+  const explorerDisabled = !txHash || !explorerUrl || !!validateTransactionId(txHash);
 
   const handleCopy = async (text: string, fieldName: string) => {
     if (!text) return;
@@ -197,17 +198,17 @@ export default function TransactionDetailScreen() {
   };
 
   const handleOpenExplorer = async () => {
-    if (!explorerUrl) return;
+    if (explorerDisabled) return;
     try {
       const canOpen = await Linking.canOpenURL(explorerUrl);
       if (canOpen) {
         await Linking.openURL(explorerUrl);
       } else {
-        Alert.alert('Error', 'Unable to open explorer link.');
+        Alert.alert('Error', 'Unable to open Stellar Testnet explorer.');
       }
     } catch (error: any) {
       console.error('Failed to open explorer:', error);
-      Alert.alert('Error', 'Failed to open explorer link.');
+      Alert.alert('Error', 'Failed to open Stellar Testnet explorer. Please try again.');
     }
   };
 
@@ -411,30 +412,22 @@ export default function TransactionDetailScreen() {
       </View>
 
       {/* Explorer Link Section */}
-      {explorerUrl ? (
-        <View style={styles.explorerSection}>
-          <TouchableOpacity 
-            style={styles.explorerButton}
-            onPress={handleOpenExplorer}
-            testID="explorer-link-btn"
-          >
-            <ExternalLink color={COLORS.primary} size={20} />
-            <Text style={styles.explorerButtonText}>View on Stellar Explorer</Text>
-          </TouchableOpacity>
-          <Text style={styles.explorerHint}>
-            View full transaction details and network information
+      <View style={styles.explorerSection}>
+        <TouchableOpacity
+          style={[styles.explorerButton, explorerDisabled && styles.explorerButtonDisabled]}
+          onPress={handleOpenExplorer}
+          disabled={explorerDisabled}
+          testID="explorer-link-btn"
+        >
+          <ExternalLink color={explorerDisabled ? COLORS.textMuted : COLORS.primary} size={20} />
+          <Text style={[styles.explorerButtonText, explorerDisabled && styles.explorerButtonTextDisabled]}>
+            View on Stellar Testnet Explorer
           </Text>
-        </View>
-      ) : txHash ? (
-        <View style={styles.explorerSection}>
-          <View style={styles.explorerUnavailable}>
-            <AlertCircle color={COLORS.textMuted} size={16} />
-            <Text style={styles.explorerUnavailableText}>
-              Explorer not available for this network
-            </Text>
-          </View>
-        </View>
-      ) : null}
+        </TouchableOpacity>
+        <Text style={styles.explorerHint}>
+          {txHash ? 'Opens in the Stellar Testnet explorer' : 'No transaction hash available'}
+        </Text>
+      </View>
     </ScrollView>
   );
 }
@@ -591,6 +584,14 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: 15,
     fontWeight: '600',
+  },
+  explorerButtonDisabled: {
+    opacity: 0.5,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+  },
+  explorerButtonTextDisabled: {
+    color: COLORS.textMuted,
   },
   explorerHint: {
     color: COLORS.textMuted,
