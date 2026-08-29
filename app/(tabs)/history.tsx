@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
   RefreshControl,
   SectionList,
   StyleSheet,
@@ -256,7 +255,7 @@ export default function HistoryScreen() {
         // useOnlineStatus.ts (setInterval + AppState foreground listener).
         refreshControl={
           <RefreshControl
-            refreshing={isLoading}
+            refreshing={isLoading && transactions.length > 0}
             onRefresh={refreshWalletData}
             tintColor={colors.primary}
             colors={[colors.primary]}
@@ -302,7 +301,7 @@ export default function HistoryScreen() {
         }
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          isLoading ? (
+          isLoading && transactions.length === 0 ? (
             <ActivitySkeleton colors={colors} styles={styles} />
           ) : (
             <ActivityEmptyState
