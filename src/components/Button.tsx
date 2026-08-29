@@ -1,5 +1,14 @@
 import React, { useMemo } from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, TouchableOpacityProps, Linking, Alert, GestureResponderEvent } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacityProps,
+  Linking,
+  Alert,
+  GestureResponderEvent,
+} from 'react-native';
 import { RADIUS, SIZES, ThemeColors } from '../constants/theme';
 import { useTheme } from '../hooks/useTheme';
 
@@ -9,19 +18,21 @@ interface ButtonProps extends TouchableOpacityProps {
   isLoading?: boolean;
   loadingText?: string;
   href?: string;
+  linkErrorMessage?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   title,
   variant = 'primary',
   isLoading = false,
-  loadingText = 'Processing… ,
+  loadingText = 'Processing…',
   style,
   disabled,
   href,
   onPress,
-  ...props
- }) => {
+  linkErrorMessage = 'Unable to open link',
+  ...props,
+}) => {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
@@ -55,41 +66,34 @@ export const Button: React.FC<ButtonProps> = ({
     if (href) {
       if (disabled || isLoading) return;
       Linking.openURL(href).catch(() => {
-        Alert.alert('Error', 'Unable to open link');
+        Alert.alert('Error', linkErrorMessage);
       });
     } else {
+      if (disabled || isLoading) return;
       onPress?.event);
     }
   };
 
   return (
     <TouchableOpacity
-      style={
-        styles.container,
-        {
-          backgroundColor: getBackgroundColor(),
-          borderColor: getBorderColor(),
-          borderWidth: variant === 'outline' ? 1 : 0,
-        },
-        style
-      }
+      style={[styles.container, { backgroundColor: getBackgroundColor(), borderColor: getBorderColor(), borderWidth: variant === 'outline' ? 1 : 0 }, style]}
       disabled={disabled || isLoading}
       activeOpacity={0.8}
       {...props}
       onPress={handlePress}
     >
       {isLoading ? (
-        >
-          <ActivityIndicator color={getTextColor()} style={ marginRight: 8 } />
+        <>
+          <ActivityIndicator color={getTextColor()} style={styles.spinner} />
           <Text style={[styles.text, { color: getTextColor() }]}>
             {loadingText}
           </Text>
-        >
+        </>
       ) : (
         <Text style={[styles.text, { color: getTextColor() }]}>
           {title}
         </Text>
-      )
+      )}
     </TouchableOpacity>
   );
 };
@@ -107,5 +111,8 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     letterSpacing: 0.5,
+  },
+  spinner: {
+    marginRight: 8,
   },
 });
