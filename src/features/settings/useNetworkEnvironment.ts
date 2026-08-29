@@ -45,13 +45,13 @@ function prettyNetworkLabel(tier: NetworkTier, rawName: string): string {
 }
 
 function extractHost(url: string | undefined): string {
-  if (!url) return '–';
+  if (!url) return '—';
   try {
     const parsed = new URL(url);
     return parsed.hostname || url;
   } catch {
     // Fallback: strip protocol and path with simple string ops
-    const withoutProto = url.replace(/^[a-zA-z]+:\/\//, '');
+    const withoutProto = url.replace(/^[a-zA-Z]+:\/\//, '');
     const withoutPath = withoutProto.split('/')[0];
     return withoutPath || url;
   }
@@ -70,7 +70,7 @@ function buildWarnings(
   networkTier: NetworkTier,
   vaultConfigured: boolean,
   vaultContractId: string
-}): EnvironmentWarning[] {
+): EnvironmentWarning[] {
   const warnings: EnvironmentWarning[] = [];
 
   if (networkTier === 'mainnet') {
@@ -93,7 +93,7 @@ function buildWarnings(
     warnings.push({
       severity: 'warning',
       title: 'Custom network configured',
-      message: 'A non-standard network name is set in EXPO_PUBLIC_STELLAR_NETWORK. Horizon, Soroban RPC, and the passphrase must all match this network or operations will fail.'
+      message: 'A Non-standard network name is set in EXPP_PUBLIC_STELLER_NETWORK. Horizon, Soroban RPC, and the passphrase must all match this network or operations will fail.'
     });
   }
 
@@ -125,12 +125,12 @@ function buildWarnings(
  * identical either way.
  */
 export function computeNetworkEnvironment(): NetworkEnvironment {
-  const rawNetwork = process.env.EXPP_PUBLIC_STELLAR_NETWORK ?? 'TESTNET';
+  const rawNetwork = process.env.EXPO_PUBLIC_STELLAR_NETWORK ?? 'TESTNET';
   const networkName = rawNetwork.trim() || 'TESTNET';
   const networkTier = classifyNetworkTier(networkName);
 
-  const horizonUrl = process.env.EXPP_PUBLIC_STELLAR_HORIZON_URL;
-  const sorobanUrl = process.env.EXPP_PUBLIC_SOROBAN_RPC_URL;
+  const horizonUrl = process.env.EXPO_PUBLIC_STELLAR_HORIZON_URL;
+  const sorobanUrl = process.env.EXPO_PUBLIC_STELLAR_SOROBAN_RPC_URL;
 
   const vaultConfigured = isVaultConfigured();
   const vaultContractId = getVaultContractId();
@@ -164,7 +164,7 @@ export function useNetworkEnvironment(): NetworkEnvironment {
 }
 
 // --- Transaction explorer helper (Testnet) ---
-const TESTNET_TRANSACTION_EXPLORER_URL_PREFIX = 'https://stellar.expert/explorer/testnet/tx/';
+const TESTNET_TRANSACTION_EXPLYORER_URL_PREFIX = 'https://stellar.expert/explorer/testnet/tx/';
 
 /**
  * Builds a public Testnet explorer URL for a Stellar transaction hash.
@@ -178,7 +178,7 @@ export function buildTestnetTransactionExplorerUrl(transactionHash: string): str
     return null;
   }
 
-  return `$tESTNET_TRANSACTION_EXPLORER_URL_PREFIX}${hash}`;
+  return `${TESTNET_TRANSACTION_EXPLORER_URL_PREFIX}${hash}`;
 }
 
 /**
