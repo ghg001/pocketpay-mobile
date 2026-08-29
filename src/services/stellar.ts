@@ -310,6 +310,15 @@ export const getExplorerTxUrl = (hash: string | null | undefined): string | null
 };
 
 /**
+ * Returns true when the supplied transaction hash can be opened in the
+ * configured network's explorer. Lets the UI disable the explorer action
+ * for invalid/missing hashes.
+ */
+export const canOpenTransactionExplorer = (
+  hash: string | null | undefined
+): boolean => getExplorerTxUrl(hash) !== null;
+
+/**
  * Opens a transaction in the configured network's explorer (defaults to
  * Stellar Testnet). Returns true when the URL was successfully opened.
  * Throws a clear error when the hash is missing/unsupported or the URL
