@@ -1,1 +1,1 @@
-export const ActivitySkeleton = () => 'Loading....';
+export { ActivityListSkeleton as ActivitySkeleton } from './ActivityListSkeleton';
