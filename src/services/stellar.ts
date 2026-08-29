@@ -1,5 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
 import * as ExpoCrypto from 'expo-crypto';
+import * as Linking from 'expo-linking';
 import { Buffer } from 'buffer';
 
 export const server = new StellarSdk.Horizon.Server(
@@ -301,11 +302,34 @@ const EXPLORER_NETWORK_PATHS: Record<string, string> = {
  * for the configured network.
  */
 export const getExplorerTxUrl = (hash: string | null | undefined): string | null => {
-  if (!hash) return null;
+  if (!hash || !/^[0-9a-f]{64}$/i.test(hash)) return null;
   const network = (process.env.EXPO_PUBLIC_STELLAR_NETWORK || 'TESTNET').toUpperCase();
   const explorerNetwork = EXPLORER_NETWORK_PATHS[network];
   if (!explorerNetwork) return null;
   return `https://stellar.expert/explorer/${explorerNetwork}/tx/${hash}`;
+};
+
+/**
+ * Opens a transaction in the configured network's explorer (defaults to
+ * Stellar Testnet). Returns true when the URL was successfully opened.
+ * Throws a clear error when the hash is missing/unsupported or the URL
+ * cannot be opened (e.g. no browser available).
+ */
+export const openTransactionExplorer = async (
+  hash: string | null | undefined
+): Promise<boolean> => {
+  const url = getExplorerTxUrl(hash);
+  if (!url) {
+    throw new Error('No explorer link is available for this transaction.');
+  }
+
+  try {
+    await Linking.openURL(url);
+    return true;
+  } catch (error) {
+    console.error('Error opening transaction explorer:', error);
+    throw new Error('Unable to open the transaction explorer. Please try again or check your device settings.');
+  }
 };
 
 /**
