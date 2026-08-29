@@ -103,6 +103,30 @@ const ActivityEmptyState = ({
   </View>
 );
 
+/**
+ * Skeleton placeholder rows shown while the activity list is initially loading.
+ * Uses neutral shapes only – no fake transaction data.
+ */
+const ActivitySkeleton = ({
+  colors,
+  styles,
+}: {
+  colors: ThemeColors;
+  styles: ReturnType<typeof createStyles>;
+}) => (
+  <View style={styles.skeletonContainer} testID="activity-skeleton">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <View key={i} style={styles.skeletonRow}>
+        <View style={[styles.skeletonAvatar, { backgroundColor: colors.border }]} />
+        <View style={styles.skeletonLines}>
+          <View style={[styles.skeletonLine, { backgroundColor: colors.border, width: '60%' }]} />
+          <View style={[styles.skeletonLine, { backgroundColor: colors.border, width: '40%' }]} />
+        </View>
+      </View>
+    ))}
+  </View>
+);
+
 // ─── Screen ────────────────────────────────────────────────────────────────────
 
 export default function HistoryScreen() {
@@ -278,13 +302,15 @@ export default function HistoryScreen() {
         }
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          !isLoading ? (
+          isLoading ? (
+            <ActivitySkeleton colors={colors} styles={styles} />
+          ) : (
             <ActivityEmptyState
               colors={colors}
               styles={styles}
               onReceivePress={() => router.push('/receive')}
             />
-          ) : null
+          )
         }
         // Avoid stale closures while also keeping rendering performant.
         extraData={{ isLoadingMore, hasMoreTransactions, colors, styles }}
@@ -374,5 +400,29 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   filterChipTextActive: {
     color: colors.background,
+  },
+  skeletonContainer: {
+    padding: SIZES.md,
+  },
+  skeletonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SIZES.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    gap: SIZES.md,
+  },
+  skeletonAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: RADIUS.round,
+  },
+  skeletonLines: {
+    flex: 1,
+    gap: SIZES.xs,
+  },
+  skeletonLine: {
+    height: 12,
+    borderRadius: RADIUS.sm,
   },
 });
