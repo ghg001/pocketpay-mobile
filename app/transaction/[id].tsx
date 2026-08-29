@@ -186,8 +186,9 @@ export default function TransactionDetailScreen() {
   const recipientLabel = resolveAddressLabel(recipientAddress, contacts);
 
   // Explorer link
-  const explorerUrl = getExplorerTxUrl(txHash, 'testnet');
-  const explorerDisabled = !txHash || !explorerUrl || !!validateTransactionId(txHash);
+  const isTxHashValid = !!txHash && !validateTransactionId(txHash);
+  const explorerUrl = isTxHashValid ? getExplorerTxUrl(txHash, 'testnet') : '';
+  const explorerDisabled = !explorerUrl;
 
   const handleCopy = async (text: string, fieldName: string) => {
     if (!text) return;
