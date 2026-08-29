@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, TouchableOpacityProps, Linking, Alert, GestureResponderEvent } from 'react-native';
 import { RADIUS, SIZES, ThemeColors } from '../constants/theme';
 import { useTheme } from '../hooks/useTheme';
 
@@ -8,17 +8,20 @@ interface ButtonProps extends TouchableOpacityProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'destructive' | 'muted';
   isLoading?: boolean;
   loadingText?: string;
+  href?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   title,
   variant = 'primary',
   isLoading = false,
-  loadingText = 'Processing…',
+  loadingText = 'Processing… ,
   style,
   disabled,
+  href,
+  onPress,
   ...props
-}) => {
+ }) => {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
@@ -39,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
     if (disabled) return colors.textMuted;
     if (variant === 'outline') return colors.primary;
     if (variant === 'muted') return colors.textPrimary;
-    return colors.background; // Dark text on bright primary/secondary buttons looks premium
+    return colors.background;
   };
 
   const getBorderColor = () => {
@@ -48,9 +51,20 @@ export const Button: React.FC<ButtonProps> = ({
     return 'transparent';
   };
 
+  const handlePress = (event: GestureResponderEvent) => {
+    if (href) {
+      if (disabled || isLoading) return;
+      Linking.openURL(href).catch(() => {
+        Alert.alert('Error', 'Unable to open link');
+      });
+    } else {
+      onPress?.event);
+    }
+  };
+
   return (
     <TouchableOpacity
-      style={[
+      style={
         styles.container,
         {
           backgroundColor: getBackgroundColor(),
@@ -58,23 +72,24 @@ export const Button: React.FC<ButtonProps> = ({
           borderWidth: variant === 'outline' ? 1 : 0,
         },
         style
-      ]}
+      }
       disabled={disabled || isLoading}
       activeOpacity={0.8}
       {...props}
+      onPress={handlePress}
     >
       {isLoading ? (
-        <>
-          <ActivityIndicator color={getTextColor()} style={{ marginRight: 8 }} />
+        >
+          <ActivityIndicator color={getTextColor()} style={ marginRight: 8 } />
           <Text style={[styles.text, { color: getTextColor() }]}>
             {loadingText}
           </Text>
-        </>
+        >
       ) : (
         <Text style={[styles.text, { color: getTextColor() }]}>
           {title}
         </Text>
-      )}
+      )
     </TouchableOpacity>
   );
 };
