@@ -2,8 +2,7 @@
  * Transaction feature helper utilities
  */
 
-import { TransactionDetail, TransactionStatus } from './types';
-import { formatAmount } from '../../utils/amount';
+import { TransactionDetail, TransactionStatus } from './types'; import { formatAmount } from '../../utils/amount'; import { Linking } from 'react-native';
 
 /**
  * Determines the status of a transaction
@@ -27,7 +26,7 @@ export function isSentTransaction(
 
 /**
  * Gets the counterparty address for a transaction
- *(recipient for sent transactions, sender for received)
+ * (recipient for sent transactions, sender for received)
  */
 export function getCounterpartyAddress(
   tx: TransactionDetail,
@@ -123,7 +122,7 @@ export function getDirectionLabel(
 /**
  * Base URL for the Stellar Testnet explorer.
  */
-const TESTNET_EXPLORER_URL = 'https://testnet.stellar.expert/explorer/testnet/tx/';
+const TESTNET_EXPLORER_URL = 'https://stellar.expert/explorer/testnet/tx/';
 
 /**
  * Checks if a transaction hash is valid (64-character hex string)
@@ -139,4 +138,21 @@ export function getTransactionExplorerUrl(tx: TransactionDetail): string | null 
   const hash = getTransactionHash(tx);
   if (!isValidTransactionHash(hash)) return null;
   return `${TESTNET_EXPLORER_URL}${hash}`;
+}
+
+/**
+ * Opens a transaction in the Stellar Testnet explorer.
+ * Throws a clear error if the hash is missing/invalid or if the explorer cannot be opened.
+ */
+export async function openTransactionExplorer(tx: TransactionDetail): Promise<void> {
+  const url = getTransactionExplorerUrl(tx);
+  if (!url) {
+    throw new Error('Invalid or missing transaction hash. Explorer view is disabled.');
+  }
+
+  try {
+    await Linking.openURL(url);
+  } catch {
+    throw new Error('Could not open the Testnet explorer. Please try again later.');
+  }
 }
