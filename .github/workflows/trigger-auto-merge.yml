@@ -1,11 +1,12 @@
 name: Trigger Auto Merge Automation
-on: pull_request_target:
+on:
+  pull_request_target:
     types:
       - opened
       - reopened
       - synchronize
       - ready_for_review
- 
+
 permissions:
   contents: read
 
@@ -18,10 +19,10 @@ jobs:
       - name: Trigger automation repo
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.AXIONVERA_AUTOMATION_TOKEN }}
+          GH_TOKEN: ${{ secrets.AXIONVERA_AUTOMATION_TOKEN }
         run: |
-          if [ -z "$ghtoken" ]; then
-            echo "AXIONVERA_AUTOMATION_TOKEN is not set; skipping central auto-merge trigger."
+          if [ -z "$GH_TOKEN" ]; then
+            echo "GH_TOKEN is not set; skipping central auto-merge trigger."
             exit 0
           fi
           gh api \
@@ -29,5 +30,5 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             /repos/Axionvera/pocketpay-issue-automation/dispatches \
             -f event_type=axionvera-pr-opened \
-            -F "client_payload[repo]=${{ github.repository }}" \
-            -F "client_payload[pr_number]=${{ github.event.pull_request.number }}"
+            -F "client_payload[repo]=${{ github.repository }" \
+            -F "client_payload[pr_number]=${{ github.event.pull_request.number }"
